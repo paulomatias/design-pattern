@@ -10,5 +10,9 @@ public abstract class Duck {
         // duck implementation of swiming
     }
 
+    public void fly() {
+        // duck implementation of flying
+    }
+
     public abstract void display();
 }
