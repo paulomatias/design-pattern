@@ -1,29 +1,33 @@
 package main;
 
-import strategy.DecoyDuck;
-import strategy.MallardDuck;
-import strategy.RubberDuck;
+import strategy.duck.DecoyDuck;
+import strategy.duck.MallardDuck;
+import strategy.duck.RubberDuck;
 
 public class MainClass {
     public static void main(String... a) {
 
         RubberDuck rubberDuck = new RubberDuck();
-        rubberDuck.fly(); // does not compile ! yeah !
-        rubberDuck.quack(); // does not compile ! yeah !
+        rubberDuck.fly(); // does compile ! call the nofly behaviour !
+        rubberDuck.quack(); // does compile ! call the squeak behaviour !
 
         DecoyDuck decoyDuck = new DecoyDuck();
-        decoyDuck.fly(); // does not compile ! yeah !
-        decoyDuck.quack(); // does not compile ! yeah !
+        decoyDuck.fly(); // does compile ! call the nofly behaviour !
+        decoyDuck.quack(); // does compile ! call the mutequack behaviour !
 
         MallardDuck mallardDuck = new MallardDuck();
         mallardDuck.fly();
         mallardDuck.quack();
         mallardDuck.display();
-        // mallardDuck has the good behaviours
+        // mallardDuck has the good behaviours : call the flywithwings behaviour and the quackbehaviour
 
-        // The problem is that we can have multiple code duplication through every class of Ducks implementing Flyable.
-        // every time we add a behaviour, it's another interface to implement for every Duck...
-        // every Duck we add, it's more code that we may duplicate...
-        // Putting behaviour through interface is not a good idea after all.
+        // Design principles used :
+        // Encapsulate what varies.
+        // Program to an interface, not an implementation.
+        // Favor composition over inheritance.
+
+        // Strategy Pattern
+        // defines a family of algorithms, encapsulates each one, and makes them interchangeable.
+        // Strategy lets the algorithm vvary indepently from clients that use it.
     }
 }
