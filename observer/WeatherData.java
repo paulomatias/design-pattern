@@ -1,34 +1,10 @@
 package observer;
 
-import observer.observer.Observer;
-import observer.observer.Subject;
-
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Observable;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class WeatherData implements Subject {
-    private Set<Observer> observers = new HashSet<>();
-
-    @Override
-    public void registerObserver(Observer observer) {
-        observers.add(observer);
-    }
-
-    @Override
-    public void removeObserver(Observer observer) {
-        observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-        Integer humidity = getHumidity();
-        Integer pressure = getPressure();
-        Integer temperature = getTemperature();
-
-        // coding to interfaces here allows this. Passing the full state of WeatherData is still ugly
-        observers.forEach(display -> display.update(humidity, pressure, temperature));
-    }
+// Drawback : Observable is a class, not an interface... (WeatherData can't have another superclass...)
+public class WeatherData extends Observable {
 
     // Temperature, humidity and pressure are just information we can get from an API, not really relevant
     public Integer getTemperature() {
@@ -43,13 +19,21 @@ public class WeatherData implements Subject {
         return ThreadLocalRandom.current().nextInt(0, 2000);
     }
 
-
     /**
      * This method should be called whenever the weather measurements have been updated
      */
     public void measurementsChanged() {
-        // every change, we notify every observers
-        notifyObservers();
+        // with Java built-in observer pattern, it is possible to give flexibility with the method setChanged
+        // we could for example, call setChanged only if the temperature would fluctuate significantly
+        // thus, we would call our observers only when it's important and manage our notifications
+        setChanged(); // IMPORTANT because not calling it would prevent observers to be notified
+
+        notifyObservers(); // here using PULL strategy with public getter
+
+        // we could use notifyObservers(Object arg); for a PUSHING strategy
+
+
+        // IMPORTANT : We don't know in which order le observers will be notified. We should not depend on any order.
     }
 
 }

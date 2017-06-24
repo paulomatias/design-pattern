@@ -1,27 +1,33 @@
 package observer.display;
 
 import observer.WeatherData;
-import observer.observer.Observer;
+
+import java.util.Observable;
+import java.util.Observer;
 
 public class StatisticDisplay implements Observer, Display {
-    // kind of bad because we have weatherData AND weatherData's state here. We could have getters in weatherData which could be better
-    private WeatherData weatherData;
+    private Observable observable;
 
     private Integer humidity;
     private Integer pressure;
     private Integer temperature;
 
-    public StatisticDisplay(WeatherData weatherData) {
-        this.weatherData = weatherData;
-        weatherData.registerObserver(this);
+    public StatisticDisplay(Observable observable) {
+        this.observable = observable;
+        observable.addObserver(this);
     }
 
     @Override
-    public void update(Integer humidity, Integer pressure, Integer temperature) {
-        this.humidity = humidity;
-        this.pressure = pressure;
-        this.temperature = temperature;
-        displayThings();
+    public void update(Observable o, Object arg) {
+        if (o instanceof WeatherData) {
+            WeatherData weatherData = (WeatherData) o;
+            // PULLING need state from public setter here : we take everything but we could just take humidity and pressure if we wanted
+            // We could also PUSH at the Observable level what data we want through arg.
+            this.humidity = weatherData.getHumidity();
+            this.pressure = weatherData.getPressure();
+            this.temperature = weatherData.getTemperature();
+            displayThings();
+        }
     }
 
     @Override

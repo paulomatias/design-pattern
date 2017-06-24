@@ -14,7 +14,7 @@ public class MainObserver {
 
         weatherData.measurementsChanged();
 
-        weatherData.removeObserver(statisticDisplay);
+        weatherData.deleteObserver(statisticDisplay);
 
         weatherData.measurementsChanged();
     }
