@@ -1,24 +1,33 @@
 package observer;
 
-import observer.display.CurrentConditionDisplay;
-import observer.display.ForecastDisplay;
-import observer.display.StatisticDisplay;
+import observer.observer.Observer;
+import observer.observer.Subject;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class WeatherData {
-    // this is quite bad, because if we want to add another display, we have to add another display here
-    private StatisticDisplay statisticDisplay;
-    private ForecastDisplay forecastDisplay;
-    private CurrentConditionDisplay currentConditionDisplay;
+public class WeatherData implements Subject {
+    private Set<Observer> observers = new HashSet<>();
 
-    public WeatherData(StatisticDisplay statisticDisplay,
-                       ForecastDisplay forecastDisplay,
-                       CurrentConditionDisplay currentConditionDisplay) {
+    @Override
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
+    }
 
-        this.statisticDisplay = statisticDisplay;
-        this.forecastDisplay = forecastDisplay;
-        this.currentConditionDisplay = currentConditionDisplay;
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        Integer humidity = getHumidity();
+        Integer pressure = getPressure();
+        Integer temperature = getTemperature();
+
+        // coding to interfaces here allows this. Passing the full state of WeatherData is still ugly
+        observers.forEach(display -> display.update(humidity, pressure, temperature));
     }
 
     // Temperature, humidity and pressure are just information we can get from an API, not really relevant
@@ -36,18 +45,11 @@ public class WeatherData {
 
 
     /**
-     * This method should be called whenever the weather mesurements have been updated
+     * This method should be called whenever the weather measurements have been updated
      */
-    public void mesurementsChanged() {
-        Integer humidity = getHumidity();
-        Integer pressure = getPressure();
-        Integer temperature = getTemperature();
-
-        // It seems like displays are using the same method on mesurementsChanged... could be improved.
-        statisticDisplay.update(humidity, pressure, temperature);
-        forecastDisplay.update(humidity, pressure, temperature);
-        currentConditionDisplay.update(humidity, pressure, temperature);
-
+    public void measurementsChanged() {
+        // every change, we notify every observers
+        notifyObservers();
     }
 
 }
