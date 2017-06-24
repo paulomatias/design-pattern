@@ -1,9 +1,9 @@
 package main;
 
-import strategy.MainStrategy;
+import observer.MainObserver;
 
 public class MainClass {
     public static void main(String... a) {
-        MainStrategy.main();
+        MainObserver.main();
     }
 }
